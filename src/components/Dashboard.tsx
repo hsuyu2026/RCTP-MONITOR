@@ -177,7 +177,7 @@ const Dashboard: React.FC<DashboardProps> = ({ settings }) => {
                   }`}
                 >
                   <iframe 
-                    src={`https://www.youtube.com/embed/${video.id}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0${qParam}`}
+                    src={`https://www.youtube-nocookie.com/embed/${video.id}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&iv_load_policy=3&cc_load_policy=0${qParam}`}
                     className="w-full h-full border-none transition-all duration-500 pointer-events-none"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   />
@@ -206,7 +206,7 @@ const Dashboard: React.FC<DashboardProps> = ({ settings }) => {
           {/* Always keeping it in DOM but hidden/visible to avoid lag */}
           <div className={`col-span-2 row-span-2 relative bg-brand-darkest-gray rounded overflow-hidden border border-white transition-all duration-500 z-10 ${hyattExpanded ? 'block' : 'hidden'}`}>
              <iframe 
-                src={`https://www.youtube.com/embed/${URLS.videos.hyatt}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0${qParam}`}
+                src={`https://www.youtube-nocookie.com/embed/${URLS.videos.hyatt}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&iv_load_policy=3&cc_load_policy=0${qParam}`}
                 className="w-full h-full border-none pointer-events-none"
                 allow="autoplay"
               />
@@ -228,7 +228,7 @@ const Dashboard: React.FC<DashboardProps> = ({ settings }) => {
         {!settings.bigVideoMode && (
           <div className="flex-grow min-h-[160px] bg-brand-darkest-gray rounded overflow-hidden border border-brand-dark-gray relative group hover:border-brand-gray transition-colors shrink">
             <iframe 
-              src={`https://www.youtube.com/embed/${bottomVideoId}?autoplay=${isAtc ? 0 : 1}&mute=${isAtc ? 0 : 1}&controls=1&modestbranding=1${qParam}`}
+              src={`https://www.youtube-nocookie.com/embed/${bottomVideoId}?autoplay=${isAtc ? 0 : 1}&mute=${isAtc ? 0 : 1}&controls=1&modestbranding=1&rel=0&iv_load_policy=3&cc_load_policy=0${qParam}`}
               className={`w-full h-full border-none opacity-100 transition-all ${!isAtc ? 'pointer-events-none' : ''}`}
               allow="autoplay"
             />

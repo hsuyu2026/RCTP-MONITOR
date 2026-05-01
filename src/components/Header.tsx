@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Settings, Camera } from 'lucide-react';
+import { Settings } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
-import html2canvas from 'html2canvas';
 import { TRANSLATIONS, MARQUEE_TEXTS } from '../constants';
 import { SettingsState } from '../types';
 
@@ -14,7 +13,6 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ settings, updateSettings, onOpenSettings }) => {
   const [time, setTime] = useState(new Date());
   const [marqueeIndex, setMarqueeIndex] = useState(0);
-  const [isCapturing, setIsCapturing] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -59,28 +57,6 @@ const Header: React.FC<HeaderProps> = ({ settings, updateSettings, onOpenSetting
     updateSettings({ language: settings.language === 'zh' ? 'en' : 'zh' });
   };
 
-  const takeScreenshot = async () => {
-    setIsCapturing(true);
-    try {
-      const element = document.body;
-      const canvas = await html2canvas(element, {
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#000000',
-        scale: window.devicePixelRatio,
-      });
-      
-      const link = document.createElement('a');
-      link.download = `RCTP-MONITOR-Screenshot-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.png`;
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-    } catch (error) {
-      console.error('Screenshot failed:', error);
-    } finally {
-      setIsCapturing(false);
-    }
-  };
-
   const renderMarqueeText = (textArray: string[]) => {
     return textArray.map((part, idx) => {
       let color = "text-white";
@@ -117,7 +93,7 @@ const Header: React.FC<HeaderProps> = ({ settings, updateSettings, onOpenSetting
 
   return (
     <header className="h-14 bg-brand-black flex items-center px-4 shrink-0 z-50">
-      <div className="flex items-center gap-2 w-56 shrink-0">
+      <div className="flex items-center gap-2 w-32 shrink-0">
         <button 
           onClick={onOpenSettings}
           className="aspect-square h-10 flex items-center justify-center rounded bg-brand-darkest-gray cursor-pointer hover:bg-brand-dark-gray transition-colors text-white"
@@ -133,13 +109,6 @@ const Header: React.FC<HeaderProps> = ({ settings, updateSettings, onOpenSetting
             <text x="4" y="18" className={`text-[10px] font-bold fill-current transition-colors ${isZh ? 'text-white' : 'text-[#474747]'}`} style={{ fontFamily: 'ui-sans-serif, system-ui' }}>ZH</text>
             <text x="20" y="34" className={`text-[10px] font-bold fill-current transition-colors ${!isZh ? 'text-white' : 'text-[#474747]'}`} style={{ fontFamily: 'ui-sans-serif, system-ui' }}>EN</text>
           </svg>
-        </button>
-        <button 
-          onClick={takeScreenshot}
-          disabled={isCapturing}
-          className={`aspect-square h-10 flex items-center justify-center rounded bg-brand-darkest-gray cursor-pointer hover:bg-brand-dark-gray transition-colors text-white ${isCapturing ? 'opacity-50 cursor-wait' : ''}`}
-        >
-          <Camera size={20} />
         </button>
       </div>
 
