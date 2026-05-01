@@ -1,0 +1,8 @@
+{
+  "name": "RCTP-MONITOR",
+  "description": "桃園國際機場（RCTP）地理資訊、即時影像與跑道航情資訊整合儀表板。",
+  "requestFramePermissions": [
+    "fullscreen"
+  ],
+  "majorCapabilities": []
+}
