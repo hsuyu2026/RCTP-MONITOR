@@ -1,20 +1,9 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
 
-# Run and deploy your AI Studio app
+# RCTP-MONITOR
 
-This contains everything you need to run your app locally.
+【RCTP-MONITOR】是一個整合「即時航班動態」、「航空無線電」以及「機場即時影像」的平台，並提供多項自訂功能，讓您能依據自身需求自由調整介面配置、顯示模式與觀看方式，無論是想快速掌握航班資訊，或單純欣賞飛機起降的瞬間，都能獲得更直覺且便利的使用體驗。
 
-View your app in AI Studio: https://ai.studio/apps/260c5574-af7a-4f53-bd14-f949cc5fad37
+[RCTP-MONITOR] is an integrated platform that combines real-time flight status, aviation radio communications, and live airport camera feeds. It also offers a variety of customization features, allowing you to freely adjust the interface layout, display modes, and viewing preferences according to your needs. Whether you want to quickly check flight information or simply enjoy watching aircraft take off and land, the platform is designed to provide a more intuitive and convenient user experience.
 
-## Run Locally
-
-**Prerequisites:**  Node.js
-
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## 網址｜URL
+https://hsuyu2026.github.io/RCTP-MONITOR/
