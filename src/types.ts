@@ -12,6 +12,8 @@ export interface SettingsState {
   fullScreen: boolean;
   largeClock: boolean;
   hideTopText: boolean;
+  preventTouch: boolean;
+  refreshKey: number;
 }
 
 export type MarqueeSegment = string | { text: string; color: string; bold?: boolean };

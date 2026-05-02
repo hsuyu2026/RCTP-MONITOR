@@ -55,7 +55,7 @@ const Dashboard: React.FC<DashboardProps> = ({ settings }) => {
   };
 
   const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  const qParam = !isMobile ? '&vq=hd1080' : '';
+  const qParam = `${!isMobile ? '&vq=hd1080' : ''}&refresh=${settings.refreshKey}`;
 
   // Video data
   const mainVideos = [
@@ -116,7 +116,7 @@ const Dashboard: React.FC<DashboardProps> = ({ settings }) => {
           >
             <div className="w-full h-full bg-brand-black border-0 lg:border border-brand-dark-gray rounded-none lg:rounded shadow-2xl overflow-hidden relative">
               <iframe 
-                src={getMapSrc()} 
+                src={`${getMapSrc()}${getMapSrc().includes('?') ? '&' : '?'}refresh=${settings.refreshKey}`} 
                 className="w-full h-full border-none opacity-80 hover:opacity-100 transition-all duration-700"
                 title="Map View"
               />
@@ -160,7 +160,7 @@ const Dashboard: React.FC<DashboardProps> = ({ settings }) => {
       {/* Right Panel: Sidebar Video Grid - 55% width */}
       <div className={`flex-1 min-h-[500px] lg:h-full flex flex-col gap-2 transition-all duration-500 overflow-y-auto lg:overflow-hidden ${settings.bigVideoMode ? 'lg:w-full' : 'lg:w-[55%]'}`}>
         {/* Upper 2x2 Grid - Fixed 16:9 for the container of the 4 grid */}
-        <div className="flex-none grid grid-cols-2 grid-rows-2 gap-0 shrink-0 text-nowrap aspect-video bg-brand-black">
+        <div className="flex-none grid grid-cols-2 grid-rows-2 gap-0 shrink-0 text-nowrap aspect-video bg-brand-black relative overflow-hidden">
           {(() => {
             return mainVideos.map((video, idx) => {
               const isExpanded = expandedVideo === idx;
@@ -178,20 +178,20 @@ const Dashboard: React.FC<DashboardProps> = ({ settings }) => {
                 >
                   <iframe 
                     src={`https://www.youtube-nocookie.com/embed/${video.id}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&iv_load_policy=3&cc_load_policy=0${qParam}`}
-                    className="w-full h-full border-none transition-all duration-500 pointer-events-none"
+                    className={`w-full h-full border-none transition-all duration-500 ${settings.preventTouch ? 'pointer-events-none' : 'pointer-events-auto'}`}
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   />
                   
                   {/* Controls - Icon only, 60% opacity black bg */}
-                  <div className="absolute bottom-2 left-2 flex items-center gap-1">
+                  <div className="absolute bottom-2 left-2 flex items-center gap-1 z-30 pointer-events-none">
                     {!settings.hideVideoTitle && (
-                      <div className="px-2 py-1 bg-black/60 rounded-sm text-[9px] font-bold uppercase tracking-wide text-white border border-white/10 pointer-events-none shadow-sm backdrop-blur-sm">
+                      <div className="px-2 py-1 bg-black/60 rounded-sm text-[9px] font-bold uppercase tracking-wide text-white border border-white/10 shadow-sm backdrop-blur-sm">
                         {video.title}
                       </div>
                     )}
                     <button 
                       onClick={() => toggleExpand(idx)}
-                      className="p-1.5 bg-black/60 text-white rounded-sm transition-all shadow-xl flex items-center justify-center border border-white/10 backdrop-blur-sm"
+                      className="p-1.5 bg-black/60 text-white rounded-sm transition-all shadow-xl flex items-center justify-center border border-white/10 backdrop-blur-sm pointer-events-auto"
                       title={isExpanded ? "Collapse" : "Expand"}
                     >
                       {isExpanded ? <Minimize2 size={12} /> : <Maximize2 size={12} />}
@@ -207,16 +207,16 @@ const Dashboard: React.FC<DashboardProps> = ({ settings }) => {
           <div className={`col-span-2 row-span-2 relative bg-brand-darkest-gray rounded overflow-hidden border border-white transition-all duration-500 z-10 ${hyattExpanded ? 'block' : 'hidden'}`}>
              <iframe 
                 src={`https://www.youtube-nocookie.com/embed/${URLS.videos.hyatt}?autoplay=1&mute=1&controls=0&modestbranding=1&rel=0&iv_load_policy=3&cc_load_policy=0${qParam}`}
-                className="w-full h-full border-none pointer-events-none"
+                className={`w-full h-full border-none ${settings.preventTouch ? 'pointer-events-none' : 'pointer-events-auto'}`}
                 allow="autoplay"
               />
-              <div className="absolute bottom-2 left-2 flex items-center gap-1">
-                 <div className="px-2 py-1 bg-black/60 rounded-sm text-[9px] font-bold uppercase tracking-wide text-white border border-white/10 pointer-events-none shadow-sm backdrop-blur-sm">
-                      {settings.language === 'zh' ? '凱悅酒店' : t.hyatt}
+              <div className="absolute bottom-2 left-2 flex items-center gap-1 z-30 pointer-events-none">
+                 <div className="px-2 py-1 bg-black/60 rounded-sm text-[9px] font-bold uppercase tracking-wide text-white border border-white/10 shadow-sm backdrop-blur-sm">
+                      {t.hyatt}
                  </div>
                  <button 
                     onClick={() => setExpandedVideo(null)}
-                    className="p-1.5 bg-black/60 text-white rounded-sm transition-all shadow-xl flex items-center justify-center border border-white/10 backdrop-blur-sm"
+                    className="p-1.5 bg-black/60 text-white rounded-sm transition-all shadow-xl flex items-center justify-center border border-white/10 backdrop-blur-sm pointer-events-auto"
                   >
                     <Minimize2 size={12} />
                   </button>

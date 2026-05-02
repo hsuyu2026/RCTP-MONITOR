@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Settings } from 'lucide-react';
+import { Settings, RefreshCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { TRANSLATIONS, MARQUEE_TEXTS } from '../constants';
 import { SettingsState } from '../types';
@@ -57,6 +57,10 @@ const Header: React.FC<HeaderProps> = ({ settings, updateSettings, onOpenSetting
     updateSettings({ language: settings.language === 'zh' ? 'en' : 'zh' });
   };
 
+  const handleRefresh = () => {
+    updateSettings({ refreshKey: Date.now() });
+  };
+
   const renderMarqueeText = (textArray: string[]) => {
     return textArray.map((part, idx) => {
       let color = "text-white";
@@ -67,10 +71,10 @@ const Header: React.FC<HeaderProps> = ({ settings, updateSettings, onOpenSetting
       const isTime = part.match(/\d{2}:\d{2}/);
 
       if (isNorth) {
-        color = "text-blue-500"; 
+        color = "text-[#1092ED]"; 
         weight = "font-bold";
       } else if (isSouth) {
-        color = "text-purple-500"; 
+        color = "text-[#0DBDAD]"; 
         weight = "font-bold";
       } else if (isTime) {
         color = "text-white";
@@ -93,7 +97,7 @@ const Header: React.FC<HeaderProps> = ({ settings, updateSettings, onOpenSetting
 
   return (
     <header className="h-14 bg-brand-black flex items-center px-4 shrink-0 z-50">
-      <div className="flex items-center gap-2 w-32 shrink-0">
+      <div className="flex items-center gap-2 w-48 shrink-0">
         <button 
           onClick={onOpenSettings}
           className="aspect-square h-10 flex items-center justify-center rounded bg-brand-darkest-gray cursor-pointer hover:bg-brand-dark-gray transition-colors text-white"
@@ -110,43 +114,47 @@ const Header: React.FC<HeaderProps> = ({ settings, updateSettings, onOpenSetting
             <text x="20" y="34" className={`text-[10px] font-bold fill-current transition-colors ${!isZh ? 'text-white' : 'text-[#474747]'}`} style={{ fontFamily: 'ui-sans-serif, system-ui' }}>EN</text>
           </svg>
         </button>
+        <button 
+          onClick={handleRefresh}
+          className="aspect-square h-10 flex items-center justify-center rounded bg-brand-darkest-gray cursor-pointer hover:bg-brand-dark-gray transition-colors text-white"
+        >
+          <RefreshCw size={18} />
+        </button>
       </div>
 
-      {!settings.hideTopText && (
-        <>
-          <div className="flex-grow h-10 flex items-center overflow-hidden px-6 mx-4 relative">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeSegments[marqueeIndex]}
-                initial={{ opacity: 0, filter: 'blur(4px)' }}
-                animate={{ opacity: 1, filter: 'blur(0px)' }}
-                exit={{ opacity: 0, filter: 'blur(4px)' }}
-                transition={{ duration: 1.0 }}
-                className="w-full flex items-center justify-center"
-              >
-                <p className="text-xs lg:text-sm whitespace-nowrap text-brand-gray font-medium tracking-wide">
-                  {renderMarqueeText(MARQUEE_TEXTS[activeSegments[marqueeIndex] as keyof typeof MARQUEE_TEXTS])}
-                </p>
-              </motion.div>
-            </AnimatePresence>
-          </div>
+      <div className="flex-grow h-10 flex items-center overflow-hidden px-6 mx-4 relative">
+        {!settings.hideTopText && (
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeSegments[marqueeIndex]}
+              initial={{ opacity: 0, filter: 'blur(4px)' }}
+              animate={{ opacity: 1, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, filter: 'blur(4px)' }}
+              transition={{ duration: 1.0 }}
+              className="w-full flex items-center justify-center"
+            >
+              <p className="text-xs lg:text-sm whitespace-nowrap text-brand-gray font-medium tracking-wide">
+                {renderMarqueeText(MARQUEE_TEXTS[activeSegments[marqueeIndex] as keyof typeof MARQUEE_TEXTS])}
+              </p>
+            </motion.div>
+          </AnimatePresence>
+        )}
+      </div>
 
-          <div className="flex items-center gap-4 w-48 justify-end shrink-0">
-            <div className="flex flex-col items-end">
-              {!settings.largeClock ? (
-                <>
-                  <span className="text-[10px] text-brand-gray leading-none uppercase tracking-[0.2em] font-bold">TAIPEI - UTC+8</span>
-                  <span className="text-xl font-mono text-white leading-none mt-1 tabular-nums">
-                    {formatTime(taipeiTime)}
-                  </span>
-                </>
-              ) : (
-                <span className="text-brand-gray font-bold tracking-tight text-xs uppercase">RCTP-MONITOR</span>
-              )}
-            </div>
-          </div>
-        </>
-      )}
+      <div className="flex items-center gap-4 w-48 justify-end shrink-0">
+        <div className="flex flex-col items-end">
+          {!settings.largeClock ? (
+            <>
+              <span className="text-[10px] text-brand-gray leading-none uppercase tracking-[0.2em] font-bold">TAIPEI - UTC+8</span>
+              <span className="text-xl font-mono text-white leading-none mt-1 tabular-nums">
+                {formatTime(taipeiTime)}
+              </span>
+            </>
+          ) : (
+            <span className="text-brand-gray font-bold tracking-tight text-xs uppercase">RCTP-MONITOR</span>
+          )}
+        </div>
+      </div>
     </header>
   );
 };

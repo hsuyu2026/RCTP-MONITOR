@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, Map, Video, Layout, Info, Globe, Maximize, Minimize, Check } from 'lucide-react';
+import { X, Map, Video, Layout, Info, Globe, Maximize, Minimize, Check, Copy, RefreshCw } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { TRANSLATIONS } from '../constants';
 import { Language, SettingsState } from '../types';
@@ -13,7 +13,65 @@ interface SettingsModalProps {
 
 const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, settings, updateSettings }) => {
   const [activeTab, setActiveTab] = React.useState<'map' | 'live' | 'ui' | 'info'>('map');
+  const [localCode, setLocalCode] = React.useState('');
   const t = TRANSLATIONS[settings.language];
+
+  // Encoding logic for configurations
+  const intervalOptions = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60];
+
+  const encodeSettings = (s: SettingsState): string => {
+    const intervalIdx = intervalOptions.indexOf(s.cycleInterval) === -1 ? 3 : intervalOptions.indexOf(s.cycleInterval);
+    
+    let val = s.language === 'en' ? 1 : 0;
+    val = val * 3 + (s.mapMode === '2d' ? 1 : s.mapMode === 'chart' ? 2 : 0);
+    val = val * 2 + (s.showAtc ? 1 : 0);
+    val = val * 2 + (s.bigVideoMode ? 1 : 0);
+    val = val * 2 + (s.autoCycle ? 1 : 0);
+    val = val * 2 + (s.largeClock ? 1 : 0);
+    val = val * 2 + (s.hideTopText ? 1 : 0);
+    val = val * 2 + (s.preventTouch ? 1 : 0);
+    val = val * 12 + intervalIdx;
+    
+    return val.toString(36).toUpperCase().padStart(4, '0');
+  };
+
+  const decodeSettings = (code: string): Partial<SettingsState> | null => {
+    let val = parseInt(code, 36);
+    if (isNaN(val) || val < 0) return null;
+    
+    // Decoding in reverse order of encoding
+    const intervalIdx = val % 12; val = Math.floor(val / 12);
+    const preventTouch = (val % 2) === 1; val = Math.floor(val / 2);
+    const hideTopText = (val % 2) === 1; val = Math.floor(val / 2);
+    const largeClock = (val % 2) === 1; val = Math.floor(val / 2);
+    const autoCycle = (val % 2) === 1; val = Math.floor(val / 2);
+    const bigVideoMode = (val % 2) === 1; val = Math.floor(val / 2);
+    const showAtc = (val % 2) === 1; val = Math.floor(val / 2);
+    const mapModeIdx = val % 3; val = Math.floor(val / 3);
+    const language = (val % 2) === 1 ? 'en' : 'zh';
+
+    const mapMode = mapModeIdx === 1 ? '2d' : mapModeIdx === 2 ? 'chart' : '3d';
+    const cycleInterval = intervalOptions[intervalIdx] || 20;
+
+    return { language, mapMode, showAtc, bigVideoMode, autoCycle, largeClock, hideTopText, preventTouch, cycleInterval };
+  };
+
+  React.useEffect(() => {
+    if (isOpen) {
+      setLocalCode(encodeSettings(settings));
+    }
+  }, [isOpen, settings]);
+
+  const handleApplyCode = () => {
+    const updated = decodeSettings(localCode);
+    if (updated) {
+      updateSettings(updated);
+    }
+  };
+
+  const handleCopyCode = () => {
+    navigator.clipboard.writeText(localCode);
+  };
 
   if (!isOpen) return null;
 
@@ -156,6 +214,11 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, settings
                     active={settings.autoCycle} 
                     onClick={() => updateSettings({ autoCycle: !settings.autoCycle })} 
                   />
+                  <Toggle 
+                    label={t.preventTouch} 
+                    active={settings.preventTouch} 
+                    onClick={() => updateSettings({ preventTouch: !settings.preventTouch })} 
+                  />
                   
                   {settings.autoCycle && (
                     <div className="p-3 rounded bg-brand-darkest-gray space-y-2 border border-brand-dark-gray">
@@ -192,6 +255,34 @@ const SettingsModal: React.FC<SettingsModalProps> = ({ isOpen, onClose, settings
                     active={settings.hideTopText} 
                     onClick={() => updateSettings({ hideTopText: !settings.hideTopText })} 
                   />
+
+                  <div className="space-y-2 pt-4 border-t border-brand-dark-gray">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-brand-gray block mb-1">
+                      {t.configCode}
+                    </label>
+                    <div className="flex gap-2">
+                      <input 
+                        type="text"
+                        value={localCode}
+                        onChange={(e) => setLocalCode(e.target.value.toUpperCase())}
+                        className="flex-1 bg-black/40 border border-brand-dark-gray rounded px-3 py-2 text-white text-sm font-mono focus:border-white outline-none transition-colors"
+                        placeholder="0000"
+                      />
+                      <button 
+                        onClick={handleCopyCode}
+                        className="p-2 bg-brand-darkest-gray hover:bg-brand-dark-gray rounded text-white transition-colors border border-brand-dark-gray"
+                        title={t.copy}
+                      >
+                        <Copy size={16} />
+                      </button>
+                      <button 
+                        onClick={handleApplyCode}
+                        className="px-4 py-2 bg-white text-brand-black rounded text-xs font-bold uppercase hover:bg-brand-gray transition-colors"
+                      >
+                        {t.apply}
+                      </button>
+                    </div>
+                  </div>
                 </motion.div>
               )}
 
